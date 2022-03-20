@@ -52,26 +52,9 @@ def get_all():
         }
     ), 404
 
-
-@app.route("/inventory/<int:inventoryID>")
-def get_by_inventoryID(inventoryID):
-    lot = Inventory.query.filter_by(inventoryID=inventoryID).first()
-    if lot:
-        return jsonify(
-            {
-                "code": 200,
-                "data": lot.json()
-            }
-        )
-    return jsonify(
-        {
-            "code": 404,
-            "message": "Lot not found."
-        }
-    ), 404
-
+# retrieve parcel-to-lot information
 @app.route("/inventory/<int:lotNum>")
-def get_by_lotNum(lotNum):
+def get_by_orderID(orderID):
     lot = Inventory.query.filter_by(lotNum=lotNum).first()
     if lot:
         return jsonify(
@@ -86,6 +69,8 @@ def get_by_lotNum(lotNum):
             "message": "Lot not found."
         }
     ), 404
+
+# assigning parcel to lot (automated - insert into inventory table after importing excel)
 
 if __name__ == "__main__":
     app.run(port="5001", debug=True)

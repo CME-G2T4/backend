@@ -5,12 +5,13 @@ use shinobilorry;
 CREATE TABLE ORDER
 (
     orderID int AUTO_INCREMENT,
+    customerName varchar(100) not null,
     orderAddress varchar(100) not null,
     orderDateTime datetime not null,
+    orderDetail varchar(200) not null,
     trackingNum int not null,
     orderStatus varchar(50) not null,
-    orderDetail varchar(200) not null,
-    filePath varchar(100) not null,
+    deliveryDate datetime not null,
 
     CONSTRAINT ORDER_PK PRIMARY KEY (orderID)
 );
