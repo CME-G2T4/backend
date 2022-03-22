@@ -1,37 +1,40 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import load_only
 from flask_cors import CORS
 from datetime import datetime
 import os
 from os import environ
-from sqlalchemy import ForeignKey
-from werkzeug.utils import secure_filename
+import sqlalchemy
+import random
 
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/shinobilorry'
+dbURL = 'mysql://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
+app.config['SQLALCHEMY_DATABASE_URI'] = dbURL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
+# app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
 db = SQLAlchemy(app)
 CORS(app)
+engine = sqlalchemy.create_engine(dbURL)
+connection = engine.raw_connection()
+cursor = connection.cursor()
 
 class Inventory(db.Model):
     __tablename__ = 'inventory'
 
-    inventoryID = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
-    orderID = db.Column(db.Integer, nullable=False)
-    lotNum = db.Column(db.Integer, nullable=False)
+    inventory_id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
+    order_id = db.Column(db.Integer, nullable=False)
+    lot_num = db.Column(db.Integer, nullable=False)
    
-    def __init__(self, inventoryID, orderID, lotNum):
-        self.inventoryID = inventoryID
-        self.orderID = orderID
-        self.lotNum = lotNum
+    def __init__(self, inventory_id, orderID, lot_num):
+        self.inventory_id = inventory_id
+        self.order_id = order_id
+        self.lot_num = lot_num
 
     def json(self):
-        return {"inventoryID": self.inventoryID, "orderID": self.orderID, "lotNum": self.lotNum}
+        return {"inventory_id": self.inventory_id, "order_id": self.order_id, "lot_num": self.lot_num}
 
 @app.route("/inventory")
 def get_all():
@@ -53,9 +56,9 @@ def get_all():
     ), 404
 
 # retrieve parcel-to-lot information
-@app.route("/inventory/<int:lotNum>")
-def get_by_orderID(orderID):
-    lot = Inventory.query.filter_by(lotNum=lotNum).first()
+@app.route("/inventory/<int:lot_num>")
+def get_by_orderID(lot_num):
+    lot = Inventory.query.filter_by(lot_num=lot_num).first()
     if lot:
         return jsonify(
             {
@@ -71,6 +74,33 @@ def get_by_orderID(orderID):
     ), 404
 
 # assigning parcel to lot (automated - insert into inventory table after importing excel)
+@app.route("/inventory", methods=["POST"])
+def add_new_inventory():
+    try:
+        query = "INSERT INTO inventory(order_id,lot_num) VALUES (%s, %s)"
+        lot_num = random.randint(1, 200)
+        orderID = request.form["orderID"]
+        values = (int(orderID), lot_num)
+        cursor.execute(query, values)
+        
+    except Exception as e:
+        return jsonify(
+            {
+                "code": 500,
+                "data": {
+                    "orderID": orderID
+                },
+                "message": "An error occurred while updating the status. " + str(e)
+            }
+        ), 500
+    connection.commit()
+    print(cursor.rowcount, "record(s) inserted")
+    return jsonify(
+        {
+            "code": 200,
+            "message": "New order assigned successfully to a lot number."
+        }
+    )
 
 if __name__ == "__main__":
     app.run(port="5001", debug=True)
