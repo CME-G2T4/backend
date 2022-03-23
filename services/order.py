@@ -114,8 +114,6 @@ def create_orders():
     cursor.execute("SELECT count(*) FROM orders")
     result = cursor.fetchone()
 
-    return "okaycan"
-
     print((result[0] - before_import[0]) == len(data.index))  # should be True
 
 # track order status

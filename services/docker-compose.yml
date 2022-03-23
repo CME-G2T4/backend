@@ -1,0 +1,49 @@
+version: "3.8"
+
+volumes:
+    rabbitmq_data:  
+
+services:
+
+    #################################
+    # Order: The Order microservice
+    #################################
+    order:
+        build:
+            context: services/
+            dockerfile: order.Dockerfile      
+        image: meifxng/order:1.0
+        restart: always
+        environment:
+            dbURL: 'mysql://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
+            PYTHONUNBUFFERED: 1
+        ports:
+            - "5000:5000"
+
+    ###############################################
+    # Inventory: The Inventory microservice
+    ###############################################
+    inventory:
+        build:
+            context: services/
+            dockerfile: inventory.Dockerfile
+        image: meifxng/inventory:1.0
+        environment:
+            dbURL: 'mysql://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
+            PYTHONUNBUFFERED: 1
+        ports:
+            - "5001:5001"
+
+    ###############################################
+    # Fulfilment: The Fulfilment microservice
+    ###############################################
+    fulfilment:
+        build:
+            context: services/
+            dockerfile: fulfilment.Dockerfile
+        image: meifxng/fulfilment:1.0
+        environment:
+            dbURL: 'mysql://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
+            PYTHONUNBUFFERED: 1
+        ports:
+            - "5002:5002"
