@@ -7,6 +7,7 @@ services:
     #################################
     order:
         build:
+            context: ./
             dockerfile: order.Dockerfile      
         image: meifxng/order:1.0
         restart: always
@@ -21,6 +22,7 @@ services:
     ###############################################
     inventory:
         build:
+            context: ./
             dockerfile: inventory.Dockerfile
         image: meifxng/inventory:1.0
         environment:
@@ -34,6 +36,7 @@ services:
     ###############################################
     fulfilment:
         build:
+            context: ./
             dockerfile: fulfilment.Dockerfile
         image: meifxng/fulfilment:1.0
         environment:
