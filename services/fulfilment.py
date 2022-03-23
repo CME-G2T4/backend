@@ -30,8 +30,27 @@ class Fulfilment(db.Model):
     def json(self):
         return {"fulfilmentID": self.fulfilmentID, "orderID": self.orderID, "driverID": self.driverID}
 
-# region FORMBUILDER
-# get all fields by form
+# get fulfilmentlist
+@app.route("/fulfilmentlist")
+def getAllFulfilment():
+    fulfilmentlist = Fulfilment.query.all()
+    if len(fulfilmentlist):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "items": [fulfilment.json() for fulfilment in fulfilmentlist]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no fulfilments."
+        }
+    ), 404
+
+# get all fulfilments from database
 @app.route("/fulfilment")
 def getAllFulfilment():
     fulfilmentlist = Fulfilment.query.all()
@@ -51,7 +70,7 @@ def getAllFulfilment():
         }
     ), 404
 
-# get specific field
+# get specific fulfilment
 @app.route("/fulfilment/<int:fulfilmentID>")
 def getFulfilment(fulfilmentID):
     fulfilment = Fulfilment.query.filter_by(fulfilmentID=fulfilmentID).first()
