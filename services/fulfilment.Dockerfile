@@ -4,4 +4,4 @@ COPY requirement.txt ./
 RUN pip install --no-cache-dir -r requirement.txt 
 COPY ./fulfilment.py ./
 EXPOSE 5002 
-CMD [ "python", "./fulfilment.py" ]
+CMD [ "python", "-m" , "flask", "run", "--host=0.0.0.0"]

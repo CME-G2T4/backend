@@ -42,7 +42,7 @@ class Order(db.Model):
         self.customer_name = customer_name
         self.order_address = order_address
         self.order_datetime = order_datetime
-        self.orderDetail = orderDetail
+        self.orderDetail = order_details
         self.tracking_no = tracking_no
         self.order_status = order_status
         self.delivery_date = delivery_date

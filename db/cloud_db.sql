@@ -2,37 +2,34 @@ drop database if exists shinobilorry;
 create database shinobilorry;
 use shinobilorry;
 
-CREATE TABLE ORDER
+CREATE TABLE ORDERS
 (
-    orderID int AUTO_INCREMENT,
-    customerName varchar(100) not null,
-    orderAddress varchar(100) not null,
-    orderDateTime datetime not null,
-    orderDetail varchar(200) not null,
-    trackingNum int not null,
-    orderStatus varchar(50) not null,
-    deliveryDate datetime not null,
+    order_id int AUTO_INCREMENT,
+    customer_name varchar(100) not null,
+    order_address varchar(200) not null,
+    order_datetime datetime not null,
+    tracking_no int not null,
+    order_status varchar(50) not null,
+    order_details varchar(200) not null,
+    delivery_date datetime not null,
 
-    CONSTRAINT ORDER_PK PRIMARY KEY (orderID)
+    CONSTRAINT ORDERS_PK PRIMARY KEY (order_id)
 );
 
 CREATE TABLE INVENTORY
 (
-    inventoryID int AUTO_INCREMENT,
-    orderID int not null,
-    lotNum int not null,
+    inventory_id int AUTO_INCREMENT,
+    order_id int not null,
+    lot_num int not null,
 
-    CONSTRAINT INVENTORY_PK PRIMARY KEY (inventoryID),
-    CONSTRAINT INVENTORY_FK FOREIGN KEY (orderID) REFERENCES ORDER (orderID)
+    CONSTRAINT INVENTORY_PK PRIMARY KEY (inventory_id)
 );
 
 CREATE TABLE FULFILMENT
 (
-  fulfilmentID int AUTO_INCREMENT,
-  orderID int not null,
-  driverID int not null,
- 
-  CONSTRAINT FULFILMENT_PK PRIMARY KEY (fulfilmentID),
-  CONSTRAINT FULFILMENT_FK FOREIGN KEY (orderID) REFERENCES ORDER (orderID)
+  fulfilment_id int AUTO_INCREMENT,
+  order_id int not null,
+  driver_id int not null,
 
+  CONSTRAINT FULFILMENT_PK PRIMARY KEY (fulfilment_id)
 );

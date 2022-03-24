@@ -4,4 +4,4 @@ COPY requirement.txt ./
 RUN pip install --no-cache-dir -r requirement.txt
 COPY ./order.py ./
 EXPOSE 5000 
-CMD [ "python", "./order.py" ]
+CMD [ "python", "-m" , "flask", "run", "--host=0.0.0.0"]

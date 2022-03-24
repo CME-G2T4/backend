@@ -1,17 +1,16 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import load_only
 from flask_cors import CORS
 from datetime import datetime
 import os
 from os import environ
 from sqlalchemy import ForeignKey
-from werkzeug.utils import secure_filename
 
 
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/shinobilorry'
+# environ.get('order_URL') or "http://localhost:5001/order"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
@@ -23,16 +22,16 @@ CORS(app)
 class Fulfilment(db.Model):
     __tablename__ = 'fulfilment'
     
-    fulfilmentID = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
-    orderID = db.Column(db.Integer, nullable=False)
-    driverID = db.Column(db.Integer, nullable=False)
+    fulfilment_id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
+    order_id = db.Column(db.Integer, nullable=False)
+    driver_id = db.Column(db.Integer, nullable=False)
 
     def json(self):
-        return {"fulfilmentID": self.fulfilmentID, "orderID": self.orderID, "driverID": self.driverID}
+        return {"fulfilment_id": self.fulfilment_id, "order_id": self.order_id, "driver_id": self.driver_id}
 
 # get fulfilmentlist
-@app.route("/fulfilmentlist")
-def getAllFulfilment():
+@app.route("/fulfilment/<int:driver_id>")
+def getFulfilmentList():
     fulfilmentlist = Fulfilment.query.all()
     if len(fulfilmentlist):
         return jsonify(
@@ -71,9 +70,9 @@ def getAllFulfilment():
     ), 404
 
 # get specific fulfilment
-@app.route("/fulfilment/<int:fulfilmentID>")
-def getFulfilment(fulfilmentID):
-    fulfilment = Fulfilment.query.filter_by(fulfilmentID=fulfilmentID).first()
+@app.route("/fulfilment/<int:fulfilment_id>")
+def getFulfilment(fulfilment_id):
+    fulfilment = Fulfilment.query.filter_by(fulfilment_id=fulfilment_id).first()
     if fulfilment:
         return jsonify(
             {
@@ -104,4 +103,4 @@ def createFulfilment():
             }), 500
 
 if __name__ == "__main__":
-    app.run(port="5002", debug=True)
+    app.run(host="0.0.0.0", port="5002", debug=True)

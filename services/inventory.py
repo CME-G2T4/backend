@@ -28,7 +28,7 @@ class Inventory(db.Model):
     order_id = db.Column(db.Integer, nullable=False)
     lot_num = db.Column(db.Integer, nullable=False)
    
-    def __init__(self, inventory_id, orderID, lot_num):
+    def __init__(self, inventory_id, order_id, lot_num):
         self.inventory_id = inventory_id
         self.order_id = order_id
         self.lot_num = lot_num
@@ -103,5 +103,5 @@ def add_new_inventory():
     )
 
 if __name__ == "__main__":
-    app.run(port="5001", debug=True)
+    app.run(host="0.0.0.0", port="5001", debug=True)
 

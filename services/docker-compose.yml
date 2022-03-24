@@ -40,6 +40,7 @@ services:
             dockerfile: fulfilment.Dockerfile
         image: meifxng/fulfilment:1.0
         environment:
+            FLASK_APP: fulfilment.py
             dbURL: 'mysql://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
             PYTHONUNBUFFERED: 1
         ports:
