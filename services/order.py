@@ -5,18 +5,17 @@ from datetime import datetime, timedelta
 import os
 from os import environ
 import sqlalchemy
-import pymysql
 import pandas as pd
 import random
 import requests
 
 app = Flask(__name__)
 
-dbURL = 'mysql://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
+dbURL = 'mysql+mysqldb://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
 app.config['SQLALCHEMY_DATABASE_URI'] = dbURL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JSON_SORT_KEYS'] = False
-# app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
 db = SQLAlchemy(app)
 CORS(app)
@@ -42,7 +41,7 @@ class Order(db.Model):
         self.customer_name = customer_name
         self.order_address = order_address
         self.order_datetime = order_datetime
-        self.orderDetail = orderDetail
+        self.orderDetail = order_details
         self.tracking_no = tracking_no
         self.order_status = order_status
         self.delivery_date = delivery_date

@@ -13,7 +13,7 @@ app = Flask(__name__)
 dbURL = 'mysql://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
 app.config['SQLALCHEMY_DATABASE_URI'] = dbURL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
 db = SQLAlchemy(app)
 CORS(app)
@@ -28,7 +28,7 @@ class Inventory(db.Model):
     order_id = db.Column(db.Integer, nullable=False)
     lot_num = db.Column(db.Integer, nullable=False)
    
-    def __init__(self, inventory_id, orderID, lot_num):
+    def __init__(self, inventory_id, order_id, lot_num):
         self.inventory_id = inventory_id
         self.order_id = order_id
         self.lot_num = lot_num
