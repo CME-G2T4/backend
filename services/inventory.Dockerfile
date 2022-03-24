@@ -4,4 +4,4 @@ COPY requirement.txt ./
 RUN pip install --no-cache-dir -r requirement.txt
 COPY ./inventory.py ./
 EXPOSE 5001
-CMD [ "python", "./inventory.py" ]
+CMD [ "python", "-m" , "flask", "run", "--host=0.0.0.0"]
