@@ -11,7 +11,8 @@ import requests
 
 app = Flask(__name__)
 
-dbURL = 'mysql://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
+#dbURL = 'mysql://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
+dbURL = 'mysql+mysqlconnector://root@localhost:3306/shinobilorry'
 app.config['SQLALCHEMY_DATABASE_URI'] = dbURL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JSON_SORT_KEYS'] = False
@@ -26,7 +27,7 @@ cursor = connection.cursor()
 class Order(db.Model):
     __tablename__ = 'orders'
 
-    orderID = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
+    order_id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
     customer_name = db.Column(db.String(100), nullable=False)
     order_address = db.Column(db.String(100), nullable=False)
     order_datetime = db.Column(db.DateTime, nullable=False)
@@ -36,8 +37,8 @@ class Order(db.Model):
     delivery_date = db.Column(db.DateTime, nullable=False)
     # filePath = db.Column(db.String(100), nullable=False)
 
-    def __init__(self, orderID, customer_name, order_address, order_datetime, order_details, tracking_no, order_status, delivery_date):
-        self.orderID = orderID
+    def __init__(self, order_id, customer_name, order_address, order_datetime, order_details, tracking_no, order_status, delivery_date):
+        self.order_id = order_id
         self.customer_name = customer_name
         self.order_address = order_address
         self.order_datetime = order_datetime
@@ -48,7 +49,7 @@ class Order(db.Model):
         # self.filePath = filePath
 
     def toJson(self):
-        return {"orderID": self.orderID, "customer_name": self.customer_name, "order_address": self.order_address, "order_datetime": self.order_datetime, "order_details": self.order_details, "tracking_no": self.tracking_no, "order_status": self.order_status, "delivery_date": self.delivery_date}
+        return {"order_id": self.order_id, "customer_name": self.customer_name, "order_address": self.order_address, "order_datetime": self.order_datetime, "order_details": self.order_details, "tracking_no": self.tracking_no, "order_status": self.order_status, "delivery_date": self.delivery_date}
 
 # display all order info
 @app.route("/orders")
@@ -106,14 +107,14 @@ def create_orders():
 
     for nid in new_order_id:
         # replace post url to inventory microservice on production
-        response = requests.post(f"http://127.0.0.1:5001/inventory", { "orderID": nid })
+        response = requests.post(f"http://127.0.0.1:5001/inventory", { "order_id": nid })
 
-    print(cursor.rowcount, "record(s) inserted")
+    #print(cursor.rowcount, "record(s) inserted")
     # check if all rows are imported
-    cursor.execute("SELECT count(*) FROM orders")
-    result = cursor.fetchone()
+    #cursor.execute("SELECT count(*) FROM orders")
+    #result = cursor.fetchone()
 
-    print((result[0] - before_import[0]) == len(data.index))  # should be True
+    #print((result[0] - before_import[0]) == len(data.index))  # should be True
 
 # track order status
 @app.route("/orders/<int:tracking_no>")
@@ -173,4 +174,4 @@ def update_by_trackingno(tracking_no):
         ), 500
 
 if __name__ == "__main__":
-    app.run(port="5000", debug=True)
+    app.run(host="0.0.0.0", port="5000", debug=True)
