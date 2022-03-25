@@ -8,11 +8,12 @@ import sqlalchemy
 import pandas as pd
 import random
 import requests
+import pymysql
 
 app = Flask(__name__)
 
-#dbURL = 'mysql://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
-dbURL = 'mysql+mysqlconnector://root@localhost:3306/shinobilorry'
+dbURL = 'mysql+pymysql://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
+#dbURL = 'mysql+mysqlconnector://root@localhost:3306/shinobilorry'
 app.config['SQLALCHEMY_DATABASE_URI'] = dbURL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JSON_SORT_KEYS'] = False
@@ -117,6 +118,7 @@ def create_orders():
     return "done"
 
     print((result[0] - before_import[0]) == len(data.index))  # should be True
+    connection.close()
 
 # track order status
 @app.route("/orders/<int:tracking_no>")

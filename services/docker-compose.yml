@@ -12,6 +12,7 @@ services:
         image: meifxng/order:1.0
         restart: always
         environment:
+            FLASK_APP: order.py
             dbURL: 'mysql://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
             PYTHONUNBUFFERED: 1
         ports:
@@ -26,6 +27,7 @@ services:
             dockerfile: inventory.Dockerfile
         image: meifxng/inventory:1.0
         environment:
+            FLASK_APP: inventory.py
             dbURL: 'mysql://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
             PYTHONUNBUFFERED: 1
         ports:
