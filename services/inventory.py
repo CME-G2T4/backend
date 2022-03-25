@@ -10,14 +10,15 @@ import random
 
 app = Flask(__name__)
 
-dbURL = 'mysql://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
+#dbURL = 'mysql://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
+dbURL = 'mysql+mysqlconnector://root@localhost:3306/shinobilorry'
 app.config['SQLALCHEMY_DATABASE_URI'] = dbURL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
 db = SQLAlchemy(app)
 CORS(app)
-engine = sqlalchemy.create_engine(dbURL)
+engine = sqlalchemy.create_engine(dbURL) 
 connection = engine.raw_connection()
 cursor = connection.cursor()
 
@@ -57,7 +58,7 @@ def get_all():
 
 # retrieve parcel-to-lot information
 @app.route("/inventory/<int:lot_num>")
-def get_by_orderID(lot_num):
+def get_by_order_id(lot_num):
     lot = Inventory.query.filter_by(lot_num=lot_num).first()
     if lot:
         return jsonify(
@@ -79,8 +80,8 @@ def add_new_inventory():
     try:
         query = "INSERT INTO inventory(order_id,lot_num) VALUES (%s, %s)"
         lot_num = random.randint(1, 200)
-        orderID = request.form["orderID"]
-        values = (int(orderID), lot_num)
+        order_id = request.form["order_id"]
+        values = (int(order_id), lot_num)
         cursor.execute(query, values)
         
     except Exception as e:
@@ -88,7 +89,7 @@ def add_new_inventory():
             {
                 "code": 500,
                 "data": {
-                    "orderID": orderID
+                    "order_id": order_id
                 },
                 "message": "An error occurred while updating the status. " + str(e)
             }
@@ -103,5 +104,5 @@ def add_new_inventory():
     )
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port="5001", debug=True)
+    app.run(port="5001", debug=True)
 

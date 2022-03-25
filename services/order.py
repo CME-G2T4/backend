@@ -109,12 +109,14 @@ def create_orders():
         # replace post url to inventory microservice on production
         response = requests.post(f"http://127.0.0.1:5001/inventory", { "order_id": nid })
 
-    #print(cursor.rowcount, "record(s) inserted")
+    # print(cursor.rowcount, "record(s) inserted")
     # check if all rows are imported
-    #cursor.execute("SELECT count(*) FROM orders")
-    #result = cursor.fetchone()
+    # cursor.execute("SELECT count(*) FROM orders")
+    # result = cursor.fetchone()
 
-    #print((result[0] - before_import[0]) == len(data.index))  # should be True
+    return "done"
+
+    print((result[0] - before_import[0]) == len(data.index))  # should be True
 
 # track order status
 @app.route("/orders/<int:tracking_no>")
@@ -174,4 +176,4 @@ def update_by_trackingno(tracking_no):
         ), 500
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port="5000", debug=True)
+    app.run(port="5000", debug=True)
