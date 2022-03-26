@@ -1,20 +1,20 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from datetime import datetime
+from datetime import date
 import os
 from os import environ
-from sqlalchemy import ForeignKey
 
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/shinobilorry'
-# environ.get('order_URL') or "http://localhost:5001/order"
+# dbURL = 'mysql+mysqlconnector://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
+# dbURL = 'mysql+mysqlconnector://root@localhost:3306/shinobilorry'
+dbURL = 'mysql+mysqlconnector://root@host.docker.internal:3306/shinobilorry'
+app.config['SQLALCHEMY_DATABASE_URI'] = dbURL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
-# uploads_dir = os.path.join('assets/img/donations')
 
 db = SQLAlchemy(app)
 CORS(app)
@@ -25,14 +25,18 @@ class Fulfilment(db.Model):
     fulfilment_id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
     order_id = db.Column(db.Integer, nullable=False)
     driver_id = db.Column(db.Integer, nullable=False)
+    delivery_date = db.Column(db.DateTime, nullable=False)
+    order_address = db.Column(db.String(255), nullable=False)
 
     def json(self):
-        return {"fulfilment_id": self.fulfilment_id, "order_id": self.order_id, "driver_id": self.driver_id}
+        return {"fulfilment_id": self.fulfilment_id, "order_id": self.order_id, "driver_id": self.driver_id, "delivery_date": self.delivery_date, "order_address": self.order_address}
 
 # get fulfilmentlist
 @app.route("/fulfilment/<int:driver_id>")
-def getFulfilmentList():
-    fulfilmentlist = Fulfilment.query.all()
+def getFulfilmentList(driver_id):
+    today = date.today()
+    print(today)
+    fulfilmentlist = Fulfilment.query.filter_by(driver_id=driver_id, delivery_date=today).all()
     if len(fulfilmentlist):
         return jsonify(
             {
@@ -45,7 +49,7 @@ def getFulfilmentList():
     return jsonify(
         {
             "code": 404,
-            "message": "There are no fulfilments."
+            "message": "There are no fulfilments for today."
         }
     ), 404
 

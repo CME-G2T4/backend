@@ -11,8 +11,9 @@ import pymysql
 
 app = Flask(__name__)
 
-dbURL = 'mysql+pymysql://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
-#dbURL = 'mysql+mysqlconnector://root@localhost:3306/shinobilorry'
+# dbURL = 'mysql+pymysql://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
+# dbURL = 'mysql+pymysql://root@localhost:3306/shinobilorry'
+dbURL = 'mysql+pymysql://root@host.docker.internal:3306/shinobilorry'
 app.config['SQLALCHEMY_DATABASE_URI'] = dbURL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}

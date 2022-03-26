@@ -16,8 +16,9 @@ import uuid
 
 app = Flask(__name__)
 
-dbURL = 'mysql+pymysql://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
-#dbURL = 'mysql+mysqlconnector://root@localhost:3306/shinobilorry'
+# dbURL = 'mysql+pymysql://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
+# dbURL = 'mysql+pymysql://root@localhost:3306/shinobilorry'
+dbURL = 'mysql+pymysql://root@host.docker.internal:3306/shinobilorry'
 app.config['SQLALCHEMY_DATABASE_URI'] = dbURL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JSON_SORT_KEYS'] = False
@@ -33,10 +34,10 @@ class Order(db.Model):
     __tablename__ = 'orders'
 
     order_id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
-    customer_name = db.Column(db.String(100), nullable=False)
-    order_address = db.Column(db.String(100), nullable=False)
+    customer_name = db.Column(db.String(255), nullable=False)
+    order_address = db.Column(db.String(255), nullable=False)
     order_datetime = db.Column(db.DateTime, nullable=False)
-    order_details = db.Column(db.String(200), nullable=False)
+    order_details = db.Column(db.String(255), nullable=False)
     tracking_no = db.Column(db.Integer, nullable=False)
     order_status = db.Column(db.String(50), nullable=False)
     delivery_date = db.Column(db.DateTime, nullable=False)
