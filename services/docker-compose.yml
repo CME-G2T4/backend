@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3.9"
 
 services:
 
@@ -31,7 +31,7 @@ services:
             dbURL: 'mysql://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
             PYTHONUNBUFFERED: 1
         ports:
-            - "5001:5001"
+            - "5001:5000"
 
     ###############################################
     # Fulfilment: The Fulfilment microservice
@@ -46,4 +46,4 @@ services:
             dbURL: 'mysql://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
             PYTHONUNBUFFERED: 1
         ports:
-            - "5002:5002"
+            - "5002:5000"
