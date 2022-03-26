@@ -9,6 +9,10 @@ import pandas as pd
 import random
 import requests
 import pymysql
+import boto3
+from openpyxl import Workbook
+from tempfile import NamedTemporaryFile
+import uuid
 
 app = Flask(__name__)
 
@@ -78,7 +82,22 @@ def get_all():
 def create_orders():
 
     filename = request.files['filename'] #retrieve excel name from frontend field
-    data = pd.read_excel(filename)
+    s3_resource = boto3.resource('s3') # Connect to s3 resource
+
+    dest_filename = "file_{}.xlsx".format(str(uuid.uuid4())[:8]) # File name to save inside aws
+
+    # s3_resource.Bucket('itsmyawsbucket').upload_file(Filename=filename.temporary_file_path, Key=dest_filename,ExtraArgs={'ACL': 'public-read'})
+    s3_resource.Bucket('itsmyawsbucket').upload_fileobj(Fileobj=filename, Key=dest_filename,ExtraArgs={'ACL': 'public-read', 'ContentType': filename.content_type }) # Fileobj - the file, need extra arguements to put content type or the file will be corrupted
+    
+    uploaded_data = s3_resource.Object('itsmyawsbucket', dest_filename).get()
+    # with open(uploaded_data.read(), 'w') as ud:
+    #     print(ud)
+    #     data = pd.read_excel(ud)
+    data = pd.read_excel(uploaded_data['Body'].read())
+    
+    # with NamedTemporaryFile() as tmp:
+        # filename = '{}'.format(dest_filename)
+        
 
     query = "INSERT INTO orders(customer_name,order_address,order_datetime,order_details,tracking_no,order_status,delivery_date) VALUES (%s, %s, %s, %s, %s, %s, %s)"
 
@@ -178,4 +197,4 @@ def update_by_trackingno(tracking_no):
         ), 500
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port="5000", debug=True)
+    app.run(port="5000", debug=True)
