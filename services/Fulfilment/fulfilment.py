@@ -8,9 +8,9 @@ from os import environ
 
 app = Flask(__name__)
 
-dbURL = 'mysql+mysqlconnector://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
+# dbURL = 'mysql+mysqlconnector://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
 # dbURL = 'mysql+mysqlconnector://root@localhost:3306/shinobilorry'
-# dbURL = environ.get('dbURL') or  'mysql+mysqlconnector://root@host.docker.internal:3306/shinobilorry'
+dbURL = environ.get('dbURL') or 'mysql+mysqlconnector://root@host.docker.internal:3306/shinobilorry'
 app.config['SQLALCHEMY_DATABASE_URI'] = dbURL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
@@ -70,24 +70,6 @@ def getAllFulfilment():
         {
             "code": 404,
             "message": "There are no fulfilments."
-        }
-    ), 404
-
-# get specific fulfilment
-@app.route("/fulfilment/<int:fulfilment_id>")
-def getFulfilment(fulfilment_id):
-    fulfilment = Fulfilment.query.filter_by(fulfilment_id=fulfilment_id).first()
-    if fulfilment:
-        return jsonify(
-            {
-                "code": 200,
-                "data":  fulfilment.json()
-            }
-        )
-    return jsonify(
-        {
-            "code": 404,
-            "message": "No fulfilment was found."
         }
     ), 404
 
