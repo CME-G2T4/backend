@@ -6,4 +6,5 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 COPY ./inventory.py ./
 EXPOSE 5001
-CMD ["flask", "run"]
+# CMD ["flask", "run"]
+CMD ["gunicorn", "-w", "4", "--bind", "0.0.0.0:5001", "inventory:app"]
