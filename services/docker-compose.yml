@@ -7,13 +7,13 @@ services:
     #################################
     order:
         build:
-            context: ./
-            dockerfile: order.Dockerfile      
+            context: ./Order
+            dockerfile: Dockerfile      
         image: meifxng/order:1.0
         restart: always
         environment:
             FLASK_APP: order.py
-            dbURL: 'mysql://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
+            dbURL: 'mysql+pymysql://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
             PYTHONUNBUFFERED: 1
         ports:
             - "5000:5000"
@@ -23,27 +23,27 @@ services:
     ###############################################
     inventory:
         build:
-            context: ./
-            dockerfile: inventory.Dockerfile
+            context: ./Inventory
+            dockerfile: Dockerfile
         image: meifxng/inventory:1.0
         environment:
             FLASK_APP: inventory.py
-            dbURL: 'mysql://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
+            dbURL: 'mysql+pymysql://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
             PYTHONUNBUFFERED: 1
         ports:
-            - "5001:5000"
+            - "5001:5001"
 
     ###############################################
     # Fulfilment: The Fulfilment microservice
     ###############################################
     fulfilment:
         build:
-            context: ./
-            dockerfile: fulfilment.Dockerfile
+            context: ./Fulfilment
+            dockerfile: Dockerfile
         image: meifxng/fulfilment:1.0
         environment:
             FLASK_APP: fulfilment.py
-            dbURL: 'mysql://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
+            dbURL: 'mysql+mysqlconnector://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
             PYTHONUNBUFFERED: 1
         ports:
-            - "5002:5000"
+            - "5002:5002"
