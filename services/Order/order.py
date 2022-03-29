@@ -35,6 +35,7 @@ class Order(db.Model):
 
     order_id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
     customer_name = db.Column(db.String(255), nullable=False)
+    customer_email = db.Column(db.String(255), nullable=False)
     order_address = db.Column(db.String(255), nullable=False)
     order_datetime = db.Column(db.DateTime, nullable=False)
     order_details = db.Column(db.String(255), nullable=False)
@@ -43,9 +44,10 @@ class Order(db.Model):
     delivery_date = db.Column(db.DateTime, nullable=False)
     # filePath = db.Column(db.String(100), nullable=False)
 
-    def __init__(self, order_id, customer_name, order_address, order_datetime, order_details, tracking_no, order_status, delivery_date):
+    def __init__(self, order_id, customer_name, customer_email, order_address, order_datetime, order_details, tracking_no, order_status, delivery_date):
         self.order_id = order_id
         self.customer_name = customer_name
+        self.customer_email = customer_email
         self.order_address = order_address
         self.order_datetime = order_datetime
         self.orderDetail = order_details
@@ -55,7 +57,7 @@ class Order(db.Model):
         # self.filePath = filePath
 
     def toJson(self):
-        return {"order_id": self.order_id, "customer_name": self.customer_name, "order_address": self.order_address, "order_datetime": self.order_datetime, "order_details": self.order_details, "tracking_no": self.tracking_no, "order_status": self.order_status, "delivery_date": self.delivery_date}
+        return {"order_id": self.order_id, "customer_name": self.customer_name, "customer_email": self.customer_email, "order_address": self.order_address, "order_datetime": self.order_datetime, "order_details": self.order_details, "tracking_no": self.tracking_no, "order_status": self.order_status, "delivery_date": self.delivery_date}
 
 # display all order info
 @app.route("/orders")
@@ -83,7 +85,9 @@ def get_all():
 def create_orders():
 
     filename = request.files['filename'] #retrieve excel name from frontend field
-    s3_resource = boto3.resource('s3') # Connect to s3 resource
+    s3_resource = boto3.resource('s3', 
+                                aws_access_key_id=AKIAWYJYQTRCPVQXNWHI,
+                                aws_secret_access_key=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) # Connect to s3 resource
 
     dest_filename = "file_{}.xlsx".format(str(uuid.uuid4())[:8]) # File name to save inside aws
 
