@@ -13,6 +13,7 @@ import boto3
 from openpyxl import Workbook
 from tempfile import NamedTemporaryFile
 import uuid
+from botocore.exceptions import ClientError
 
 app = Flask(__name__)
 
@@ -35,7 +36,7 @@ class Order(db.Model):
 
     order_id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
     customer_name = db.Column(db.String(255), nullable=False)
-    customer_email = db.Column(db.String(255), nullable=False)
+    customer_email = db.Column(db.String(354), nullable=False)
     order_address = db.Column(db.String(255), nullable=False)
     order_datetime = db.Column(db.DateTime, nullable=False)
     order_details = db.Column(db.String(255), nullable=False)
@@ -80,19 +81,81 @@ def get_all():
         }
     ), 404
 
+def send_email(customer_name, customer_email, tracking_no):
+    client = boto3.client('ses',
+                        aws_access_key_id='AKIAWYJYQTRCPVQXNWHI',
+                        aws_secret_access_key='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',
+                        region_name='us-east-1') # Connect to ses
+
+    SENDER = "mfchan.2019@scis.smu.edu.sg"
+
+    # Replace recipient@example.com with a "To" address. If your account 
+    # is still in the sandbox, this address must be verified.
+    RECIPIENT = customer_email # To replace with customer_email
+
+    # If necessary, replace us-west-2 with the AWS Region you're using for Amazon SES.
+    AWS_REGION = "us-east-1"
+
+    # The subject line for the email.
+    SUBJECT = "Shinobilorry - Your Tracking Information"
+
+    # The email body for recipients with non-HTML email clients.
+    BODY_TEXT = (f"Dear {customer_name},\r\n\n"
+                f"We've got your parcel! Sit tight and it will be with you in a jiffy!\r\n"
+                f"This is your tracking ID {tracking_no}.\r\n\n"
+                f"Thank you."
+                )         
+
+    # The character encoding for the email.
+    CHARSET = "UTF-8"
+
+    # Create a new SES resource and specify a region.
+    # client = boto3.client('ses',region_name='us-east-1')
+
+    # Try to send the email.
+    try:
+        #Provide the contents of the email.
+        response = client.send_email(
+            Destination={
+                'ToAddresses': [
+                    customer_email,
+                ],
+            },
+            Message={
+                'Body': {
+                    'Text': {
+                        'Charset': CHARSET,
+                        'Data': BODY_TEXT,
+                    },
+                },
+                'Subject': {
+                    'Charset': CHARSET,
+                    'Data': SUBJECT,
+                },
+            },
+            Source=SENDER,
+
+        )
+    # Display an error if something goes wrong.	
+    except ClientError as e:
+        print(e.response['Error']['Message'])
+    else:
+        print("Email sent! Message ID:"),
+        print(response['MessageId'])
+
 # import data from excel, generate delivery date = today + 3 days, generate random tracking number
 @app.route("/orders", methods=['POST'])
 def create_orders():
 
     filename = request.files['filename'] #retrieve excel name from frontend field
-    s3_resource = boto3.resource('s3', 
-                                aws_access_key_id=AKIAWYJYQTRCPVQXNWHI,
-                                aws_secret_access_key=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) # Connect to s3 resource
+    s3_resource = boto3.resource('s3',
+                                aws_access_key_id='AKIAWYJYQTRCPVQXNWHI',
+                                aws_secret_access_key='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') # Connect to s3 resource
 
     dest_filename = "file_{}.xlsx".format(str(uuid.uuid4())[:8]) # File name to save inside aws
 
     # s3_resource.Bucket('itsmyawsbucket').upload_file(Filename=filename.temporary_file_path, Key=dest_filename,ExtraArgs={'ACL': 'public-read'})
-    s3_resource.Bucket('itsmyawsbucket').upload_fileobj(Fileobj=filename, Key=dest_filename,ExtraArgs={'ACL': 'public-read', 'ContentType': filename.content_type }) # Fileobj - the file, need extra arguements to put content type or the file will be corrupted
+    s3_resource.Bucket('itsmyawsbucket').upload_fileobj(Fileobj=filename, Key=dest_filename,ExtraArgs={'ACL': 'bucket-owner-full-control', 'ContentType': filename.content_type }) # Fileobj - the file, need extra arguements to put content type or the file will be corrupted
     
     uploaded_data = s3_resource.Object('itsmyawsbucket', dest_filename).get()
     # with open(uploaded_data.read(), 'w') as ud:
@@ -104,7 +167,7 @@ def create_orders():
         # filename = '{}'.format(dest_filename)
         
 
-    query = "INSERT INTO orders(customer_name,order_address,order_datetime,order_details,tracking_no,order_status,delivery_date) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+    query = "INSERT INTO orders(customer_name,customer_email,order_address,order_datetime,order_details,tracking_no,order_status,delivery_date) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
 
     # grab existing row count in the database for validation later
     cursor.execute("SELECT count(*) FROM orders")
@@ -113,6 +176,7 @@ def create_orders():
     new_order_id = []
     for i,r in data.iterrows():
         customer_name = r['customer_name']
+        customer_email = r['customer_email']
         order_address = r['order_address']
         order_datetime = r['order_datetime']
         order_details = r['order_details']
@@ -122,11 +186,12 @@ def create_orders():
         order_status = 'Pending'
         delivery_date = order_datetime + timedelta(days=3)
         
-        values = (customer_name, order_address, order_datetime.strftime('%Y-%m-%d %H:%M:%S'), order_details, tracking_no, order_status, delivery_date.strftime('%Y-%m-%d %H:%M:%S'))
+        values = (customer_name, customer_email, order_address, order_datetime.strftime('%Y-%m-%d %H:%M:%S'), order_details, tracking_no, order_status, delivery_date.strftime('%Y-%m-%d %H:%M:%S'))
 
         # Execute SQL query
         cursor.execute(query, values)
         new_order_id.append(cursor.lastrowid)
+        send_email(customer_name, customer_email, tracking_no)
 
     connection.commit()
 
@@ -143,6 +208,8 @@ def create_orders():
 
     print((result[0] - before_import[0]) == len(data.index))  # should be True
     connection.close()
+
+    send_email(customer_email)
 
 # track order status
 @app.route("/orders/<int:tracking_no>")
