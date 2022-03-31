@@ -32,7 +32,7 @@ class Fulfilment(db.Model):
         return {"fulfilment_id": self.fulfilment_id, "order_id": self.order_id, "driver_id": self.driver_id, "delivery_date": self.delivery_date, "order_address": self.order_address}
 
 # get fulfilmentlist
-@app.route("/fulfilment/<int:driver_id>")
+@app.route("/fulfilmentlist/<int:driver_id>")
 def getFulfilmentList(driver_id):
     today = date.today()
     print(today)
@@ -43,6 +43,26 @@ def getFulfilmentList(driver_id):
                 "code": 200,
                 "data": {
                     "items": [fulfilment.json() for fulfilment in fulfilmentlist]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no fulfilments for today."
+        }
+    ), 404
+
+# get specific fulfilment
+@app.route("/fulfilment/<int:fulfilment_id>")
+def getFulfilment(fulfilment_id):
+    fulfilment = Fulfilment.query.filter_by(fulfilment_id=fulfilment_id).first()
+    if len(fulfilment):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "items": fulfilment.json()
                 }
             }
         )
