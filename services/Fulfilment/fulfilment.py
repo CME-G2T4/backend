@@ -57,7 +57,7 @@ def getFulfilmentList(driver_id):
 @app.route("/fulfilment/<int:fulfilment_id>")
 def getFulfilment(fulfilment_id):
     fulfilment = Fulfilment.query.filter_by(fulfilment_id=fulfilment_id).first()
-    if len(fulfilment):
+    if fulfilment:
         return jsonify(
             {
                 "code": 200,
@@ -69,7 +69,7 @@ def getFulfilment(fulfilment_id):
     return jsonify(
         {
             "code": 404,
-            "message": "There are no fulfilments for today."
+            "message": "No fulfilment found."
         }
     ), 404
 
