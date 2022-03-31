@@ -61,9 +61,7 @@ def getFulfilment(fulfilment_id):
         return jsonify(
             {
                 "code": 200,
-                "data": {
-                    "items": fulfilment.json()
-                }
+                "data": fulfilment.json()
             }
         )
     return jsonify(

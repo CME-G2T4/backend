@@ -47,7 +47,7 @@ def get_all():
             {
                 "code": 200,
                 "data": {
-                    "orders": [inventorylist.json() for lot in inventorylist]
+                    "orders": [lot.json() for lot in inventorylist]
                 }
             }
         )
