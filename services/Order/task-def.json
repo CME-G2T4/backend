@@ -5,7 +5,15 @@
       {
         "dnsSearchDomains": null,
         "environmentFiles": null,
-        "logConfiguration": null,
+        "logConfiguration": {
+          "logDriver": "awslogs",
+          "secretOptions": null,
+          "options": {
+            "awslogs-group": "/ecs/order-task",
+            "awslogs-region": "ap-southeast-1",
+            "awslogs-stream-prefix": "ecs"
+          }
+        },
         "entryPoint": null,
         "portMappings": [
           {
@@ -34,7 +42,7 @@
         "memoryReservation": null,
         "volumesFrom": [],
         "stopTimeout": null,
-        "image": "922305558134.dkr.ecr.ap-southeast-1.amazonaws.com/orderservice",
+        "image": "142541850171.dkr.ecr.ap-southeast-1.amazonaws.com/orderservice:latest",
         "startTimeout": null,
         "firelensConfiguration": null,
         "dependsOn": null,
@@ -51,7 +59,7 @@
         "dockerLabels": null,
         "systemControls": null,
         "privileged": null,
-        "name": "order"
+        "name": "order-container"
       }
     ],
     "placementConstraints": [],
@@ -61,14 +69,26 @@
       "EXTERNAL",
       "EC2"
     ],
-    "taskDefinitionArn": "arn:aws:ecs:ap-southeast-1:922305558134:task-definition/task-def:1",
-    "family": "task-def",
+    "taskDefinitionArn": "arn:aws:ecs:ap-southeast-1:142541850171:task-definition/order-task:5",
+    "family": "order-task",
     "requiresAttributes": [
       {
         "targetId": null,
         "targetType": null,
         "value": null,
+        "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+      },
+      {
+        "targetId": null,
+        "targetType": null,
+        "value": null,
         "name": "com.amazonaws.ecs.capability.ecr-auth"
+      },
+      {
+        "targetId": null,
+        "targetType": null,
+        "value": null,
+        "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
       }
     ],
     "pidMode": null,
@@ -78,7 +98,7 @@
     "networkMode": null,
     "runtimePlatform": null,
     "cpu": null,
-    "revision": 1,
+    "revision": 5,
     "status": "ACTIVE",
     "inferenceAccelerators": null,
     "proxyConfiguration": null,
