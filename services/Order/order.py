@@ -20,6 +20,10 @@ app = Flask(__name__)
 # dbURL = 'mysql+pymysql://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
 # dbURL = 'mysql+pymysql://root@localhost:3306/shinobilorry'
 dbURL = environ.get('dbURL') or 'mysql+pymysql://root@host.docker.internal:3306/shinobilorry'
+inventoryURL = environ.get('inventoryURL') or 'http://127.0.0.1:5001'
+awsAccessKeyId= environ.get('awsAccessKeyId')
+awsSecretAccessKey = environ.get('awsSecretAccessKey')
+awsRegion = environ.get('region')
 app.config['SQLALCHEMY_DATABASE_URI'] = dbURL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JSON_SORT_KEYS'] = False
@@ -83,9 +87,9 @@ def get_all():
 
 def send_email(customer_name, customer_email, tracking_no):
     client = boto3.client('ses',
-                        aws_access_key_id='AKIAWYJYQTRCPVQXNWHI',
-                        aws_secret_access_key='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',
-                        region_name='us-east-1') # Connect to ses
+                        aws_access_key_id=awsAccessKeyId,
+                        aws_secret_access_key=awsSecretAccessKey,
+                        region_name=awsRegion) # Connect to ses
 
     SENDER = "mfchan.2019@scis.smu.edu.sg"
 
@@ -94,7 +98,7 @@ def send_email(customer_name, customer_email, tracking_no):
     RECIPIENT = customer_email # To replace with customer_email
 
     # If necessary, replace us-west-2 with the AWS Region you're using for Amazon SES.
-    AWS_REGION = "us-east-1"
+    AWS_REGION = awsRegion
 
     # The subject line for the email.
     SUBJECT = "Shinobilorry - Your Tracking Information"
@@ -149,8 +153,8 @@ def create_orders():
 
     filename = request.files['filename'] #retrieve excel name from frontend field
     s3_resource = boto3.resource('s3',
-                                aws_access_key_id='AKIAWYJYQTRCPVQXNWHI',
-                                aws_secret_access_key='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') # Connect to s3 resource
+                                aws_access_key_id=awsAccessKeyId,
+                                aws_secret_access_key=awsSecretAccessKey) # Connect to s3 resource
 
     dest_filename = "file_{}.xlsx".format(str(uuid.uuid4())[:8]) # File name to save inside aws
 
@@ -197,7 +201,7 @@ def create_orders():
 
     for nid in new_order_id:
         # replace post url to inventory microservice on production
-        response = requests.post(f"http://127.0.0.1:5001/inventory", { "order_id": nid })
+        response = requests.post(inventoryURL + f"/inventory", { "order_id": nid })
 
     # print(cursor.rowcount, "record(s) inserted")
     # check if all rows are imported
