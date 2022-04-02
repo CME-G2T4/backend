@@ -33,7 +33,7 @@ on:
 
 env:
   AWS_REGION: ap-southeast-1
-  ECS_CLUSTER: shinobilorry-cluster-test      
+  ECS_CLUSTER: shinobilorry
   
   # Define OrderService Environment Variables
   ORDER_ECR_REPOSITORY: orderservice
