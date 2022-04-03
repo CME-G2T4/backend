@@ -28,7 +28,27 @@
         "environment": [
           {
             "name": "dbURL",
-            "value": "mysql+pymysql://admin:password@cme-db.cziuplds1j4w.ap-southeast-1.rds.amazonaws.com/CME"
+            "value": "mysql+pymysql://<dbURL>"
+          },
+          {
+              "name": "awsAccessKeyId",
+              "value": "<awsAccessKeyId>"
+          },
+          {
+            "name": "awsSecretAccessKey",
+            "value": "<awsSecretAccessKey>"
+          },
+          { 
+            "name": "inventoryURL",
+            "value": "https://api.shinobilorry.ninja/v1"
+          },
+          {
+              "name": "region",
+              "value": "ap-southeast-1"
+          },
+          {
+              "name": "s3OrderBucket",
+              "value": "shinobilorry-order-file"
           }
         ],
         "resourceRequirements": null,
