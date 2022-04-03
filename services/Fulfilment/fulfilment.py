@@ -2,15 +2,16 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from datetime import date
-import os
 from os import environ
 
 
 app = Flask(__name__)
 
-# dbURL = 'mysql+mysqlconnector://admin:password@database-1.cqnvz4nypbvo.us-east-1.rds.amazonaws.com/CME'
-# dbURL = 'mysql+mysqlconnector://root@localhost:3306/shinobilorry'
-dbURL = environ.get('dbURL') or 'mysql+mysqlconnector://root@host.docker.internal:3306/shinobilorry'
+dbURL = environ.get('dbURL') or 'mysql+pymysql://admin:password@pt-test.cziuplds1j4w.ap-southeast-1.rds.amazonaws.com/CME'
+awsAccessKeyId= environ.get('awsAccessKeyId')
+awsSecretAccessKey = environ.get('awsSecretAccessKey')
+awsRegion = environ.get('region')
+
 app.config['SQLALCHEMY_DATABASE_URI'] = dbURL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
