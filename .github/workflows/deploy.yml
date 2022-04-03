@@ -33,25 +33,25 @@ on:
 
 env:
   AWS_REGION: ap-southeast-1
-  ECS_CLUSTER: shinobilorry
+  ECS_CLUSTER: CME-Cluster
   
   # Define OrderService Environment Variables
   ORDER_ECR_REPOSITORY: orderservice
-  ORDER_ECS_SERVICE: order
+  ORDER_ECS_SERVICE: order-service
   ORDER_ECS_TASK_DEFINITION: services/Order/task-def.json
   ORDER_CONTAINER_NAME: order-container
   ORDER_DOCKERFILE_PATH: ./services/Order
   
   # Define InventoryService Environment Variables
   INVENTORY_ECR_REPOSITORY: inventoryservice
-  INVENTORY_ECS_SERVICE: inventory
+  INVENTORY_ECS_SERVICE: inventory-service
   INVENTORY_ECS_TASK_DEFINITION: services/Inventory/task-def.json
   INVENTORY_CONTAINER_NAME: inventory-container
   INVENTORY_DOCKERFILE_PATH: ./services/Inventory
   
   # Define FulfilmentService Environment Variables
   FULFILMENT_ECR_REPOSITORY: fulfilmentservice
-  FULFILMENT_ECS_SERVICE: fulfilment
+  FULFILMENT_ECS_SERVICE: fulfilment-service
   FULFILMENT_ECS_TASK_DEFINITION: services/Fulfilment/task-def.json
   FULFILMENT_CONTAINER_NAME: fulfilment-container
   FULFILMENT_DOCKERFILE_PATH: ./services/Fulfilment
