@@ -156,13 +156,12 @@ def create_orders():
     dest_filename = "file_{}.xlsx".format(str(uuid.uuid4())[:8]) # File name to save inside aws
 
     # s3_resource.Bucket('itsmyawsbucket').upload_file(Filename=filename.temporary_file_path, Key=dest_filename,ExtraArgs={'ACL': 'public-read'})
-    s3_resource.Bucket(s3OrderBucket).upload_fileobj(Fileobj=filename, Key=dest_filename,ExtraArgs={'ACL': 'bucket-owner-full-control', 'ContentType': filename.content_type }) # Fileobj - the file, need extra arguements to put content type or the file will be corrupted
-    
-    uploaded_data = s3_resource.Object(s3OrderBucket, dest_filename).get()
-    # with open(uploaded_data.read(), 'w') as ud:
-    #     print(ud)
-    #     data = pd.read_excel(ud)
-    data = pd.read_excel(uploaded_data['Body'].read())
+    # s3_resource.Bucket(s3OrderBucket).upload_fileobj(Fileobj=filename, Key=dest_filename,ExtraArgs={'ACL': 'bucket-owner-full-control', 'ContentType': filename.content_type }) # Fileobj - the file, need extra arguements to put content type or the file will be corrupted
+    # uploaded_data = s3_resource.Object(s3OrderBucket, dest_filename).get()
+
+    # data = pd.read_excel(uploaded_data['Body'].read())
+    data = pd.read_excel(request.files['filename'] )
+    print(data)
     
     # with NamedTemporaryFile() as tmp:
         # filename = '{}'.format(dest_filename)
