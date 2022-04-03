@@ -69,7 +69,7 @@
       "EXTERNAL",
       "EC2"
     ],
-    "taskDefinitionArn": "arn:aws:ecs:ap-southeast-1:142541850171:task-definition/fulfilment-task:1",
+    "taskDefinitionArn": "arn:aws:ecs:ap-southeast-1:142541850171:task-definition/fulfilment-task:11",
     "family": "fulfilment-task",
     "requiresAttributes": [
       {

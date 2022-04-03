@@ -61,7 +61,7 @@
       "EXTERNAL",
       "EC2"
     ],
-    "taskDefinitionArn": "arn:aws:ecs:ap-southeast-1:142541850171:task-definition/inventory-task:1",
+    "taskDefinitionArn": "arn:aws:ecs:ap-southeast-1:142541850171:task-definition/inventory-task:11",
     "family": "inventory-task",
     "requiresAttributes": [
       {

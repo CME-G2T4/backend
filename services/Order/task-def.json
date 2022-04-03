@@ -69,7 +69,7 @@
       "EXTERNAL",
       "EC2"
     ],
-    "taskDefinitionArn": "arn:aws:ecs:ap-southeast-1:142541850171:task-definition/order-task:5",
+    "taskDefinitionArn": "arn:aws:ecs:ap-southeast-1:142541850171:task-definition/order-task:15",
     "family": "order-task",
     "requiresAttributes": [
       {
