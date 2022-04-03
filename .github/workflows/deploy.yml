@@ -67,6 +67,17 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    # Inject environment variable for Task Definitions
+    - name: Update Task Definitions
+      run: |
+        sed -i "s|<dbURL>|$DB_URL|g" services/Order/task-def.json
+        sed -i "s|<awsAccessKeyId>|$AWS_ACCESS_KEY_ID|g" services/Order/task-def.json
+        sed -i "s|<awsSecretAccessKey>|$AWS_SECRET_ACCESS_KEY|g" services/Order/task-def.json
+      env:
+        DB_URL: ${{secrets.DB_URL}}
+        AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+        AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -115,6 +126,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    
+    # Inject environment variable for Task Definitions
+    - name: Update Task Definitions
+      run: |
+        sed -i "s|<dbURL>|$DB_URL|g" services/Inventory/task-def.json
+      env:
+        DB_URL: ${{secrets.DB_URL}}
     
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -165,6 +183,13 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    # Inject environment variable for Task Definitions
+    - name: Update Task Definitions
+      run: |
+        sed -i "s|<dbURL>|$DB_URL|g" services/Fulfilment/task-def.json
+      env:
+        DB_URL: ${{secrets.DB_URL}}
+
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -197,10 +222,10 @@ jobs:
         container-name: ${{ env.FULFILMENT_CONTAINER_NAME }}
         image: ${{ steps.build-image.outputs.image }}
 
-#     - name: Deploy Amazon ECS task definition
-#       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-#       with:
-#         task-definition: ${{ steps.task-def.outputs.task-definition }}
-#         service: ${{ env.FULFILMENT_ECS_SERVICE }}
-#         cluster: ${{ env.ECS_CLUSTER }}
-#         wait-for-service-stability: true
+    - name: Deploy Amazon ECS task definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.task-def.outputs.task-definition }}
+        service: ${{ env.FULFILMENT_ECS_SERVICE }}
+        cluster: ${{ env.ECS_CLUSTER }}
+        wait-for-service-stability: true
