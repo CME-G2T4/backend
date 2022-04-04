@@ -195,9 +195,9 @@ def create_orders():
 
     connection.commit()
 
-    # for nid in new_order_id:
+    for nid in new_order_id:
     #     # replace post url to inventory microservice on production
-    #     inventory_response = requests.post(inventoryURL + f"/inventory", { "order_id": nid })
+        inventory_response = requests.post(inventoryURL + f"/inventory", { "order_id": nid })
 
     # print(cursor.rowcount, "record(s) inserted")
     # check if all rows are imported
@@ -208,7 +208,7 @@ def create_orders():
         {
             "code":200,
             "message": "Orders imported successfully."
-            # "inventory_response": inventory_response.text
+            "inventory_response": inventory_response.text
         }
     ), 200
 
