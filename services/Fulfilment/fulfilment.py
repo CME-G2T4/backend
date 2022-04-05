@@ -8,8 +8,8 @@ from os import environ
 app = Flask(__name__)
 
 dbURL = environ.get('dbURL') or 'mysql+pymysql://admin:password@pt-test.cziuplds1j4w.ap-southeast-1.rds.amazonaws.com/CME'
-awsAccessKeyId= environ.get('awsAccessKeyId')
-awsSecretAccessKey = environ.get('awsSecretAccessKey')
+awsAccessKeyId= environ.get('awsAccessKeyId') or ""
+awsSecretAccessKey = environ.get('awsSecretAccessKey') or ""
 awsRegion = environ.get('region')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = dbURL

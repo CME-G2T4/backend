@@ -103,7 +103,7 @@ def send_email(customer_name, customer_email, tracking_no):
     # The email body for recipients with non-HTML email clients.
     BODY_TEXT = (f"Dear {customer_name},\r\n\n"
                 f"We've got your parcel! Sit tight and it will be with you in a jiffy!\r\n"
-                f"This is your tracking ID {tracking_no}.\r\n\n"
+                f"This is your tracking ID {tracking_no}. You may track using this link: https://shinobilorry.ninja/tracking \r\n\n"
                 f"Thank you."
                 )         
 
@@ -155,17 +155,9 @@ def create_orders():
 
     dest_filename = "file_{}.xlsx".format(str(uuid.uuid4())[:8]) # File name to save inside aws
 
-    # s3_resource.Bucket('itsmyawsbucket').upload_file(Filename=filename.temporary_file_path, Key=dest_filename,ExtraArgs={'ACL': 'public-read'})
-    s3_resource.Bucket(s3OrderBucket).upload_fileobj(Fileobj=filename, Key=dest_filename,ExtraArgs={'ACL': 'public-read', 'ContentType': filename.content_type }) # Fileobj - the file, need extra arguements to put content type or the file will be corrupted
+    s3_resource.Bucket(s3OrderBucket).upload_fileobj(Fileobj=filename, Key=dest_filename,ExtraArgs={'ACL': 'bucket-owner-full-control', 'ContentType': filename.content_type }) # Fileobj - the file, need extra arguements to put content type or the file will be corrupted
     uploaded_data = s3_resource.Object(s3OrderBucket, dest_filename).get()
-
     data = pd.read_excel(uploaded_data['Body'].read())
-    # data = pd.read_excel(request.files['filename'] )
-    # print(data)
-    
-    # with NamedTemporaryFile() as tmp:
-        # filename = '{}'.format(dest_filename)
-        
 
     query = "INSERT INTO orders(customer_name,customer_email,order_address,order_datetime,order_details,tracking_no,order_status,delivery_date) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
 
@@ -198,11 +190,6 @@ def create_orders():
     for nid in new_order_id:
     #     # replace post url to inventory microservice on production
         inventory_response = requests.post(inventoryURL + f"/inventory", { "order_id": nid })
-
-    # print(cursor.rowcount, "record(s) inserted")
-    # check if all rows are imported
-    # cursor.execute("SELECT count(*) FROM orders")
-    # result = cursor.fetchone()
 
     return jsonify(
         {
