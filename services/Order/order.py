@@ -78,7 +78,7 @@ def get_all():
     return jsonify(
         {
             "code": 404,
-            "message": "There are no orders."
+            "message": "There are no orders available."
         }
     ), 404
 
